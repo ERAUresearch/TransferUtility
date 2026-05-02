@@ -3,40 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SME Evaluation Form</title>
+    <title>SME Evaluation Form - Drone Detection Dataset</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html {
+            font-size: 16px;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f5f5f5;
             color: #333;
-            line-height: 1.6;
+            line-height: 1.4;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         .container {
             max-width: 100%;
-            padding: 12px;
+            padding: 16px;
             margin: 0 auto;
+            padding-left: 0;
+            padding-right: 0;
         }
 
         header {
             background: linear-gradient(135deg, #1e3a8a, #3b82f6);
             color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 16px;
+            padding: 20px 16px;
+            border-radius: 0;
+            margin: 0 0 16px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-left: 0;
+            margin-right: 0;
         }
 
         header h1 {
-            font-size: 32px;
-            margin-bottom: 12px;
+            font-size: 28px;
+            margin-bottom: 2px;
             font-weight: 700;
+            line-height: 1.1;
+            padding: 0 16px;
+        }
+
+        header p {
+            font-size: 16px;
+            opacity: 0.95;
+            margin-bottom: 0;
+            padding: 0 16px;
+        }
+
+        .content {
+            padding: 0 16px;
         }
 
         .progress {
@@ -48,741 +72,851 @@
         }
 
         .progress-bar {
+            background: #10b981;
             height: 100%;
-            background: #34d399;
-            transition: width 0.3s;
+            transition: width 0.3s ease;
         }
 
-        .card {
+        .case-info {
             background: white;
-            border-radius: 8px;
-            padding: 16px;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        @media (min-width: 600px) {
+            .case-info {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 12px;
+            }
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            padding: 4px 0;
+        }
+
+        .info-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 2px;
+        }
+
+        .info-value {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1e3a8a;
+        }
+
+        .prompt-structure {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
             margin-bottom: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .card h2 {
-            font-size: 18px;
-            color: #1e3a8a;
-            margin-bottom: 12px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 8px;
-        }
-
-        .image-box {
-            background: transparent;
-            border: none;
-            border-radius: 0;
-            padding: 0;
-            text-align: center;
-            margin-bottom: 16px;
-            margin-left: -12px;
-            margin-right: -12px;
-            min-height: 350px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: calc(100% + 24px);
-        }
-
-        .image-box img {
-            width: 100%;
-            max-height: 400px;
-            border-radius: 0;
-            object-fit: contain;
-        }
-
-        .image-placeholder {
-            color: #999;
-            font-size: 14px;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .info-item {
-            font-size: 18px;
-        }
-
-        .info-label {
-            color: #666;
-            font-weight: 700;
-            text-transform: uppercase;
+        .prompt-structure h3 {
             font-size: 16px;
-            letter-spacing: 0.5px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e3a8a;
         }
 
-        .info-value {
-            color: #333;
+        .structure-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        @media (min-width: 600px) {
+            .structure-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 8px;
+            }
+        }
+
+        .structure-item {
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 3px solid #3b82f6;
+        }
+
+        .structure-item-label {
+            font-size: 10px;
             font-weight: 700;
-            margin-top: 6px;
-            font-size: 20px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 2px;
+        }
+
+        .structure-item-value {
+            font-size: 15px;
+            color: #1e3a8a;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .image-section {
+            background: white;
+            padding: 0;
+            border-radius: 0;
+            margin: 0 0 16px 0;
+            box-shadow: none;
+            text-align: center;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+        }
+
+        .image-section img {
+            max-width: 100%;
+            width: 100%;
+            height: auto;
+            border-radius: 0;
+            margin-bottom: 0;
+            display: block;
+        }
+
+        .image-error {
+            background: #fee;
+            color: #c33;
+            padding: 20px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .prompt-text-section {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .prompt-text-section h3 {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #1e3a8a;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
         }
 
         .prompt-text {
-            background: #f9f9f9;
-            padding: 14px;
-            border-radius: 6px;
-            font-size: 18px;
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
-        .prompt-label {
-            font-size: 18px;
-            color: #666;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-top: 14px;
-            margin-bottom: 8px;
-            letter-spacing: 0.5px;
-        }
-
-        .rating-group {
-            margin-bottom: 32px;
-        }
-
-        .rating-label {
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 16px;
+            line-height: 1.4;
             color: #333;
+            background: #f8f9fa;
+            padding: 10px;
+            border-left: 3px solid #3b82f6;
+            border-radius: 3px;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+
+        .matrices-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
             margin-bottom: 12px;
         }
 
-        .rating-hint {
-            font-size: 18px;
-            color: #999;
-            margin-bottom: 16px;
+        @media (min-width: 1200px) {
+            .matrices-container {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+
+        .matrix {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .matrix h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e3a8a;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 8px;
+        }
+
+        .rating-group {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rating-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .rating-label {
+            font-size: 15px;
             font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+            line-height: 1.3;
         }
 
         .rating-buttons {
             display: flex;
             gap: 8px;
-            justify-content: space-between;
         }
 
         .rating-btn {
             flex: 1;
-            padding: 18px 10px;
-            border: 3px solid #ddd;
+            min-height: 48px;
+            padding: 12px 6px;
+            border: 2px solid #d1d5db;
             background: white;
-            border-radius: 8px;
-            font-weight: 700;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-size: 22px;
-            min-height: 70px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #666;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-
-        .rating-btn:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-            transform: translateY(-2px);
         }
 
         .rating-btn:active {
             transform: scale(0.95);
+        }
+
+        .rating-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .rating-btn.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .disposition-section {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .rating-btn.active {
-            background: #3b82f6;
-            color: white;
-            border-color: #1e40af;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        .disposition-section h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e3a8a;
         }
 
-        .rating-btn.active {
-            background: #3b82f6;
-            color: white;
-            border-color: #1e3a8a;
-        }
-
-        .disposition-group {
+        .disposition-options {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
-        .disposition-btn {
-            padding: 18px 16px;
-            border: 3px solid #ddd;
-            background: white;
-            border-radius: 8px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-            font-size: 22px;
-            font-weight: 700;
-            min-height: 70px;
+        .disposition-option {
             display: flex;
-            align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-        }
-
-        .disposition-btn:hover {
-            border-color: #10b981;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .disposition-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .disposition-btn.active {
-            background: #dcfce7;
-            border-color: #059669;
-            color: #047857;
-            font-weight: 700;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
-        }
-
-        .disposition-input {
-            display: none;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 16px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 18px;
-            resize: vertical;
-            margin-bottom: 16px;
-            line-height: 1.8;
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
-        }
-
-        .collapsible-section {
-            margin-bottom: 12px;
-        }
-
-        .collapsible-header {
-            background: #f0f4f8;
-            border: 3px solid #ddd;
-            padding: 18px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            padding: 11px;
+            border: 2px solid #e5e7eb;
+            border-radius: 5px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 22px;
-            user-select: none;
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-            min-height: 65px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            transition: all 0.2s ease;
+            min-height: 45px;
         }
 
-        .collapsible-header:hover {
-            background: #e8eef8;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        .collapsible-header:active {
-            background: #dce3f0;
+        .disposition-option:active {
             transform: scale(0.98);
         }
 
-        .collapsible-header::after {
-            content: '▼';
-            display: inline-block;
-            transition: transform 0.2s;
+        .disposition-option:hover {
+            background: #f8f9fa;
+            border-color: #3b82f6;
+        }
+
+        .disposition-option input[type="radio"] {
+            margin-right: 10px;
+            margin-top: 2px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            min-width: 18px;
+            flex-shrink: 0;
+        }
+
+        .disposition-option span {
+            font-size: 15px;
+            line-height: 1.3;
+        }
+
+        .disposition-option.selected {
+            background: #eff6ff;
+            border-color: #3b82f6;
+        }
+
+        .comments-section {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .comments-section h3 {
             font-size: 16px;
-            margin-left: 12px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e3a8a;
         }
 
-        .collapsible-header.collapsed::after {
-            transform: rotate(-90deg);
-        }
-
-        .collapsible-content {
-            max-height: 1000px;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out, opacity 0.2s;
-            opacity: 1;
-            padding-top: 12px;
-        }
-
-        .collapsible-content.collapsed {
-            max-height: 0;
-            opacity: 0;
-            padding-top: 0;
-        }
-
-        .button-group {
+        .comment-field {
+            margin-bottom: 12px;
             display: flex;
-            gap: 12px;
-            margin-top: 28px;
-            margin-bottom: 20px;
+            flex-direction: column;
+        }
+
+        .comment-field:last-child {
+            margin-bottom: 0;
+        }
+
+        .comment-label {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .comment-textarea {
+            padding: 10px;
+            border: 2px solid #d1d5db;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 70px;
+            width: 100%;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .progress-section {
+            margin-bottom: 16px;
+        }
+
+        .btn-export {
+            background: #10b981;
+            color: white;
+            width: 100%;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .btn-export.show {
+            display: flex;
         }
 
         button {
-            flex: 1;
-            padding: 20px;
-            border: 3px solid #ddd;
-            border-radius: 10px;
-            font-size: 24px;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
-            min-height: 80px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-        }
-
-        .btn-prev {
-            background: #f0f0f0;
-            color: #333;
-            border-color: #999;
-        }
-
-        .btn-prev:hover {
-            background: #e0e0e0;
-        }
-
-        .btn-next {
-            background: #10b981;
+        .btn-primary {
+            background: #3b82f6;
             color: white;
-            border-color: #059669;
+            flex: 1;
         }
 
-        .btn-next:hover {
-            background: #059669;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+        .btn-primary:active:not(:disabled) {
+            background: #2563eb;
+            transform: scale(0.98);
         }
 
-        .btn-next:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        .btn-primary:hover:not(:disabled) {
+            background: #2563eb;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
-        .btn-next:disabled {
-            opacity: 0.5;
+        .btn-primary:disabled {
+            background: #d1d5db;
             cursor: not-allowed;
+            opacity: 0.6;
         }
 
-        footer {
-            text-align: center;
-            color: #999;
-            font-size: 12px;
-            padding: 20px 0;
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #333;
+            flex: 1;
         }
 
-        .error-msg {
+        .btn-secondary:active:not(:disabled) {
+            background: #d1d5db;
+            transform: scale(0.98);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #d1d5db;
+        }
+
+        .btn-export:active {
+            background: #059669;
+            transform: scale(0.98);
+        }
+
+        .btn-export:hover {
+            background: #059669;
+        }
+
+        .validation-error {
             background: #fee;
-            border: 1px solid #fcc;
             color: #c33;
             padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            font-size: 14px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 13px;
         }
 
-        .success-msg {
-            background: #efe;
-            border: 1px solid #cfc;
-            color: #363;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 12px;
-            font-size: 14px;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>SME Evaluation</h1>
-            <p id="caseInfo">Case 1 of 10</p>
+            <h1>SME Evaluation Form</h1>
+            <p style="font-size: 14px; margin-bottom: 0;">Drone Detection Dataset Review</p>
             <div class="progress">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
         </header>
 
-        <div id="message"></div>
+        <div id="validationError" class="validation-error hidden"></div>
 
-        <!-- Case Info -->
-        <div class="card">
-            <h2>Case Information</h2>
-            <div class="info-grid">
-                <div class="info-item">
-                    <div class="info-label">Case ID</div>
-                    <div class="info-value" id="caseId">--</div>
-                </div>
-                <div class="info-item">
-                    <div class="info-label">Formula</div>
-                    <div class="info-value" id="formula">--</div>
-                </div>
+        <div class="content">
+        <!-- Case Information -->
+        <div class="case-info">
+            <div class="info-item">
+                <div class="info-label">Case ID</div>
+                <div class="info-value" id="caseId">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Image ID</div>
+                <div class="info-value" id="imageId">-</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">Formula Code</div>
+                <div class="info-value" id="formulaCode">-</div>
             </div>
         </div>
 
-        <!-- Image -->
-        <div class="card">
-            <h2>Generated Image</h2>
-            <div class="image-box" id="imageBox">
-                <img id="generatedImage" src="" alt="Generated image" style="max-width: 100%; border-radius: 6px;">
+        <!-- Prompt Structure -->
+        <div class="prompt-structure">
+            <h3>Prompt Structure</h3>
+            <div class="structure-grid">
+                <div class="structure-item">
+                    <div class="structure-item-label">Viewpoint</div>
+                    <div class="structure-item-value" id="viewpoint">-</div>
+                </div>
+                <div class="structure-item">
+                    <div class="structure-item-label">Target/Drone Depiction</div>
+                    <div class="structure-item-value" id="target">-</div>
+                </div>
+                <div class="structure-item">
+                    <div class="structure-item-label">Environment</div>
+                    <div class="structure-item-value" id="environment">-</div>
+                </div>
+                <div class="structure-item">
+                    <div class="structure-item-label">Lighting/Weather</div>
+                    <div class="structure-item-value" id="lighting">-</div>
+                </div>
+                <div class="structure-item">
+                    <div class="structure-item-label">Distractors/Background</div>
+                    <div class="structure-item-value" id="distractors">-</div>
+                </div>
             </div>
         </div>
-
-        <!-- Prompt -->
-        <div class="card">
-            <h2>Prompt Details</h2>
-            <div class="prompt-label">Viewpoint</div>
-            <div class="prompt-text" id="viewpoint">Loading...</div>
-
-            <div class="prompt-label">Target</div>
-            <div class="prompt-text" id="target">Loading...</div>
-
-            <div class="prompt-label">Environment</div>
-            <div class="prompt-text" id="environment">Loading...</div>
-
-            <div class="prompt-label">Lighting</div>
-            <div class="prompt-text" id="lighting">Loading...</div>
-
-            <div class="prompt-label">Distractors</div>
-            <div class="prompt-text" id="distractors">Loading...</div>
         </div>
 
-        <!-- Ratings -->
-        <div class="card">
-            <h2>Your Ratings (1-5)</h2>
+        <!-- Generated Image -->
+        <div class="image-section">
+            <img id="caseImage" alt="Generated drone detection image" onerror="this.parentElement.innerHTML='<div class=&quot;image-error&quot;>Image not found</div>'">
+        </div>
 
-            <div class="rating-group">
-                <div class="rating-label">Visual Realism</div>
-                <div class="rating-hint">How realistic does it look?</div>
-                <div class="rating-buttons" data-name="visualRealism">
-                    <button class="rating-btn" data-value="1">1</button>
-                    <button class="rating-btn" data-value="2">2</button>
-                    <button class="rating-btn" data-value="3">3</button>
-                    <button class="rating-btn" data-value="4">4</button>
-                    <button class="rating-btn" data-value="5">5</button>
-                </div>
+        <div class="content">
+        <!-- Full Prompt Text -->
+        <div class="prompt-text-section">
+            <h3>Full Prompt Text</h3>
+            <div class="prompt-text" id="promptText">-</div>
+        </div>
+
+        <!-- Three Evaluation Matrices -->
+        <div class="matrices-container">
+            <!-- Prompt Evaluation -->
+            <div class="matrix">
+                <h3>Prompt Evaluation</h3>
+                <div id="promptMatrix"></div>
             </div>
 
-            <div class="rating-group">
-                <div class="rating-label">Operational Relevance</div>
-                <div class="rating-hint">Relevant for drone detection?</div>
-                <div class="rating-buttons" data-name="operationalRelevance">
-                    <button class="rating-btn" data-value="1">1</button>
-                    <button class="rating-btn" data-value="2">2</button>
-                    <button class="rating-btn" data-value="3">3</button>
-                    <button class="rating-btn" data-value="4">4</button>
-                    <button class="rating-btn" data-value="5">5</button>
-                </div>
+            <!-- Image Evaluation -->
+            <div class="matrix">
+                <h3>Image Evaluation</h3>
+                <div id="imageMatrix"></div>
             </div>
 
-            <div class="rating-group">
-                <div class="rating-label">Target Usefulness</div>
-                <div class="rating-hint">Is the drone useful for training?</div>
-                <div class="rating-buttons" data-name="targetUsefulness">
-                    <button class="rating-btn" data-value="1">1</button>
-                    <button class="rating-btn" data-value="2">2</button>
-                    <button class="rating-btn" data-value="3">3</button>
-                    <button class="rating-btn" data-value="4">4</button>
-                    <button class="rating-btn" data-value="5">5</button>
-                </div>
-            </div>
-
-            <div class="rating-group">
-                <div class="rating-label">Transfer-Learning Value</div>
-                <div class="rating-hint">Good for model improvement?</div>
-                <div class="rating-buttons" data-name="transferLearning">
-                    <button class="rating-btn" data-value="1">1</button>
-                    <button class="rating-btn" data-value="2">2</button>
-                    <button class="rating-btn" data-value="3">3</button>
-                    <button class="rating-btn" data-value="4">4</button>
-                    <button class="rating-btn" data-value="5">5</button>
-                </div>
+            <!-- Prompt-Image Alignment -->
+            <div class="matrix">
+                <h3>Prompt-Image Alignment</h3>
+                <div id="alignmentMatrix"></div>
             </div>
         </div>
 
         <!-- Disposition -->
-        <div class="card">
-            <h2>Final Decision</h2>
-            <div class="disposition-group">
-                <label class="disposition-btn">
-                    <input type="radio" name="disposition" value="Retain" class="disposition-input">
-                    <span>✓ Retain - Include as is</span>
+        <div class="disposition-section">
+            <h3>Final Disposition</h3>
+            <div class="disposition-options">
+                <label class="disposition-option">
+                    <input type="radio" name="disposition" value="Retain">
+                    <span><strong>Retain</strong> - The case is suitable for inclusion in the candidate dataset without major revision.</span>
                 </label>
-                <label class="disposition-btn">
-                    <input type="radio" name="disposition" value="Refine and regenerate" class="disposition-input">
-                    <span>⟳ Refine - Has potential</span>
+                <label class="disposition-option">
+                    <input type="radio" name="disposition" value="Refine and regenerate">
+                    <span><strong>Refine and regenerate</strong> - The case has potential but should be improved through prompt modification and regeneration.</span>
                 </label>
-                <label class="disposition-btn">
-                    <input type="radio" name="disposition" value="Drop" class="disposition-input">
-                    <span>✕ Drop - Not suitable</span>
+                <label class="disposition-option">
+                    <input type="radio" name="disposition" value="Drop">
+                    <span><strong>Drop</strong> - The case is not suitable for further use in the dataset.</span>
                 </label>
             </div>
         </div>
 
         <!-- Comments -->
-        <div class="card collapsible-section">
-            <div class="collapsible-header collapsed" onclick="toggleComments(event)">
-                Comments (Optional)
+        <div class="comments-section">
+            <h3>Diagnostic Comments</h3>
+            <div class="comment-field">
+                <label class="comment-label">Main weakness of this case</label>
+                <textarea class="comment-textarea" id="mainWeakness" placeholder="e.g., unrealistic background, drone too indistinct, poor airport relevance..."></textarea>
             </div>
-            <div class="collapsible-content collapsed">
-                <label class="prompt-label">Main weakness</label>
-                <textarea id="weakness" placeholder="e.g., drone too small, unrealistic lighting..." rows="2"></textarea>
-
-                <label class="prompt-label">How to improve</label>
-                <textarea id="improvement" placeholder="e.g., increase drone size, fix background..." rows="2"></textarea>
-
-                <label class="prompt-label">Other notes</label>
-                <textarea id="notes" placeholder="Any other observations..." rows="2"></textarea>
+            <div class="comment-field">
+                <label class="comment-label">What should be improved?</label>
+                <textarea class="comment-textarea" id="improvement" placeholder="e.g., change viewpoint, reduce clutter, strengthen target visibility..."></textarea>
             </div>
         </div>
 
         <!-- Navigation -->
-        <div class="button-group">
-            <button class="btn-prev" onclick="previousCase()">← Previous</button>
-            <button class="btn-next" onclick="nextCase()">Next →</button>
+        <div class="nav-buttons">
+            <button class="btn-secondary" id="prevBtn" onclick="previousCase()">← Previous</button>
+            <button class="btn-primary" id="nextBtn" onclick="nextCase()">Next →</button>
         </div>
 
-        <footer>
-            Use arrow keys to navigate. All ratings required before saving.
-        </footer>
+        <!-- Progress Bar -->
+        <div class="progress-section">
+            <div class="progress">
+                <div class="progress-bar" id="progressBarBottom"></div>
+            </div>
+        </div>
+
+        <button class="btn-export" id="exportBtn" onclick="exportCSV()">↓ Export Results as CSV</button>
+        </div>
     </div>
 
     <script>
-        let allCases = [];
+        // Prompt evaluation statements
+        const PROMPT_STATEMENTS = [
+            "The prompt describes an operationally meaningful airport scenario.",
+            "The prompt includes sufficient detail to guide useful image generation.",
+            "The prompt components are internally consistent.",
+            "The prompt captures relevant conditions for airport drone-detection use cases.",
+            "The prompt is suitable for synthetic dataset development."
+        ];
+
+        // Image evaluation statements
+        const IMAGE_STATEMENTS = [
+            "The image appears visually realistic.",
+            "The airport environment appears operationally plausible.",
+            "The drone target depiction is useful for detection or training purposes.",
+            "The lighting and scene conditions are credible.",
+            "The background and distractor elements are realistic and relevant.",
+            "The image is overall useful for synthetic dataset development."
+        ];
+
+        // Alignment evaluation statements
+        const ALIGNMENT_STATEMENTS = [
+            "The image reflects the intended prompt conditions.",
+            "The image is consistent with the prompt structure shown.",
+            "The output captures the key operational elements intended by the prompt."
+        ];
+
+        let caseData = [];
         let currentIndex = 0;
         let evaluations = {};
 
-        // Load data
         async function init() {
             try {
-                const response = await fetch('./data.json');
+                const response = await fetch('data.json');
                 const data = await response.json();
-                allCases = data.cases;
+                caseData = data.cases;
 
-                // Initialize evaluations
-                allCases.forEach(c => {
-                    evaluations[c.caseId] = {
-                        visualRealism: null,
-                        operationalRelevance: null,
-                        targetUsefulness: null,
-                        transferLearning: null,
-                        disposition: null,
-                        weakness: '',
-                        improvement: '',
-                        notes: ''
-                    };
+                // Initialize evaluations object
+                caseData.forEach(c => {
+                    if (!evaluations[c.caseId]) {
+                        evaluations[c.caseId] = {
+                            prompt: {},
+                            image: {},
+                            alignment: {},
+                            disposition: null,
+                            mainWeakness: '',
+                            improvement: ''
+                        };
+                    }
                 });
 
                 loadCase(0);
-                setupRatingButtons();
-                setupDispositionButtons();
-                setupKeyboard();
-            } catch (e) {
-                showMessage('Error loading data: ' + e.message, 'error');
+            } catch (error) {
+                console.error('Error loading data:', error);
             }
         }
 
         function loadCase(index) {
-            if (index < 0 || index >= allCases.length) return;
+            if (index < 0 || index >= caseData.length) return;
+
             currentIndex = index;
-            const c = allCases[index];
+            const caseItem = caseData[index];
 
-            // Update UI
-            document.getElementById('caseInfo').textContent = `Case ${index + 1} of ${allCases.length}`;
-            document.getElementById('progressBar').style.width = ((index + 1) / allCases.length * 100) + '%';
-            document.getElementById('caseId').textContent = c.caseId;
-            document.getElementById('formula').textContent = c.formulaCode;
+            // Update case info
+            document.getElementById('caseId').textContent = caseItem.caseId;
+            document.getElementById('imageId').textContent = caseItem.imageId || '-';
+            document.getElementById('formulaCode').textContent = caseItem.formulaCode;
 
-            // Load image with fallback
-            const img = document.getElementById('generatedImage');
-            const box = document.getElementById('imageBox');
+            // Update prompt structure
+            document.getElementById('viewpoint').textContent = caseItem.viewpoint || '-';
+            document.getElementById('target').textContent = caseItem.target || '-';
+            document.getElementById('environment').textContent = caseItem.environment || '-';
+            document.getElementById('lighting').textContent = caseItem.lighting || '-';
+            document.getElementById('distractors').textContent = caseItem.distractors || '-';
 
-            if (img) {
-                img.onerror = function() {
-                    console.log('Image failed to load: ' + c.imagePath);
-                    box.innerHTML = '<div class="image-placeholder" style="text-align: center; color: #999;"><p>Image not available</p><p style="font-size: 12px; margin-top: 8px;">Formula: ' + c.formulaCode + '</p></div>';
-                };
+            // Update image
+            document.getElementById('caseImage').src = caseItem.imagePath || '';
 
-                img.src = c.imagePath;
-                console.log('Loading image: ' + c.imagePath);
+            // Update full prompt text
+            document.getElementById('promptText').textContent = caseItem.fullPrompt || '-';
+
+            // Render matrices
+            renderMatrix('promptMatrix', PROMPT_STATEMENTS, 'prompt', caseItem.caseId);
+            renderMatrix('imageMatrix', IMAGE_STATEMENTS, 'image', caseItem.caseId);
+            renderMatrix('alignmentMatrix', ALIGNMENT_STATEMENTS, 'alignment', caseItem.caseId);
+
+            // Restore disposition and comments
+            const eval = evaluations[caseItem.caseId];
+            const dispositionRadios = document.querySelectorAll('input[name="disposition"]');
+            dispositionRadios.forEach(radio => {
+                radio.checked = (radio.value === eval.disposition);
+                radio.parentElement.classList.toggle('selected', radio.checked);
+            });
+
+            document.getElementById('mainWeakness').value = eval.mainWeakness || '';
+            document.getElementById('improvement').value = eval.improvement || '';
+
+            // Update progress
+            updateProgress();
+
+            // Clear validation error
+            document.getElementById('validationError').classList.add('hidden');
+        }
+
+        function renderMatrix(elementId, statements, type, caseId) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+
+            statements.forEach((statement, idx) => {
+                const eval = evaluations[caseId];
+                const currentValue = eval[type][idx];
+
+                const html = `
+                    <div class="rating-group">
+                        <div class="rating-label">${statement}</div>
+                        <div class="rating-buttons">
+                            ${[1, 2, 3, 4, 5].map(rating => `
+                                <button class="rating-btn ${currentValue === rating ? 'selected' : ''}"
+                                    onclick="setRating('${caseId}', '${type}', ${idx}, ${rating})">
+                                    ${rating}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+        }
+
+        function setRating(caseId, type, index, rating) {
+            evaluations[caseId][type][index] = rating;
+            renderMatrix(type + 'Matrix',
+                type === 'prompt' ? PROMPT_STATEMENTS :
+                type === 'image' ? IMAGE_STATEMENTS :
+                ALIGNMENT_STATEMENTS,
+                type, caseId);
+        }
+
+        function updateProgress() {
+            const progress = ((currentIndex + 1) / caseData.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressBarBottom').style.width = progress + '%';
+            document.querySelector('header p').textContent = `Case ${currentIndex + 1} of ${caseData.length}`;
+
+            // Show export button only on last case
+            const exportBtn = document.getElementById('exportBtn');
+            if (currentIndex === caseData.length - 1) {
+                exportBtn.classList.add('show');
+            } else {
+                exportBtn.classList.remove('show');
             }
-
-            document.getElementById('viewpoint').textContent = c.viewpoint;
-            document.getElementById('target').textContent = c.target;
-            document.getElementById('environment').textContent = c.environment;
-            document.getElementById('lighting').textContent = c.lighting;
-            document.getElementById('distractors').textContent = c.distractors;
-
-            // Load saved evaluation
-            const eval = evaluations[c.caseId];
-            document.querySelectorAll('.rating-buttons').forEach(group => {
-                const name = group.dataset.name;
-                const value = eval[name];
-                group.querySelectorAll('.rating-btn').forEach(btn => {
-                    btn.classList.toggle('active', btn.dataset.value == value);
-                });
-            });
-
-            // Clear all disposition selections first
-            document.querySelectorAll('input[name="disposition"]').forEach(radio => {
-                radio.checked = false;
-            });
-
-            // Only check if this case has a saved disposition
-            if (eval.disposition) {
-                const dispBtn = document.querySelector(`input[name="disposition"][value="${eval.disposition}"]`);
-                if (dispBtn) dispBtn.checked = true;
-            }
-
-            document.querySelectorAll('.disposition-btn').forEach(btn => {
-                const radio = btn.querySelector('input');
-                btn.classList.toggle('active', radio.checked);
-            });
-
-            document.getElementById('weakness').value = eval.weakness;
-            document.getElementById('improvement').value = eval.improvement;
-            document.getElementById('notes').value = eval.notes;
-
-            window.scrollTo(0, 0);
-        }
-
-        function setupRatingButtons() {
-            document.querySelectorAll('.rating-buttons').forEach(group => {
-                group.querySelectorAll('.rating-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const name = group.dataset.name;
-                        const value = this.dataset.value;
-                        evaluations[allCases[currentIndex].caseId][name] = value;
-                        group.querySelectorAll('.rating-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                    });
-                });
-            });
-        }
-
-        function setupDispositionButtons() {
-            document.querySelectorAll('.disposition-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const radio = this.querySelector('input');
-                    radio.checked = true;
-                    evaluations[allCases[currentIndex].caseId].disposition = radio.value;
-                    document.querySelectorAll('.disposition-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                });
-            });
-        }
-
-        function setupKeyboard() {
-            document.addEventListener('keydown', e => {
-                if (e.key === 'ArrowLeft') previousCase();
-                if (e.key === 'ArrowRight') nextCase();
-            });
-        }
-
-        function toggleComments(event) {
-            event.preventDefault();
-            const header = event.target;
-            const content = header.nextElementSibling;
-            header.classList.toggle('collapsed');
-            content.classList.toggle('collapsed');
         }
 
         function validateCase() {
-            const eval = evaluations[allCases[currentIndex].caseId];
-            const missing = [];
-            if (!eval.visualRealism) missing.push('Visual Realism');
-            if (!eval.operationalRelevance) missing.push('Operational Relevance');
-            if (!eval.targetUsefulness) missing.push('Target Usefulness');
-            if (!eval.transferLearning) missing.push('Transfer-Learning');
-            if (!eval.disposition) missing.push('Final Decision');
-            return missing;
-        }
+            const caseItem = caseData[currentIndex];
+            const eval = evaluations[caseItem.caseId];
 
-        function saveCase() {
-            const eval = evaluations[allCases[currentIndex].caseId];
-            eval.weakness = document.getElementById('weakness').value;
-            eval.improvement = document.getElementById('improvement').value;
-            eval.notes = document.getElementById('notes').value;
+            // Check all ratings
+            const prompts = Object.values(eval.prompt).filter(v => v !== undefined);
+            const images = Object.values(eval.image).filter(v => v !== undefined);
+            const alignments = Object.values(eval.alignment).filter(v => v !== undefined);
+
+            if (prompts.length < PROMPT_STATEMENTS.length ||
+                images.length < IMAGE_STATEMENTS.length ||
+                alignments.length < ALIGNMENT_STATEMENTS.length) {
+                return { valid: false, error: 'Please rate all dimensions before proceeding.' };
+            }
+
+            if (!eval.disposition) {
+                return { valid: false, error: 'Please select a final disposition before proceeding.' };
+            }
+
+            return { valid: true };
         }
 
         function nextCase() {
-            const missing = validateCase();
-            if (missing.length > 0) {
-                showMessage('Required: ' + missing.join(', '), 'error');
+            const validation = validateCase();
+            if (!validation.valid) {
+                document.getElementById('validationError').textContent = validation.error;
+                document.getElementById('validationError').classList.remove('hidden');
                 return;
             }
-            saveCase();
-            if (currentIndex < allCases.length - 1) {
+
+            // Save current case data
+            const caseItem = caseData[currentIndex];
+            const eval = evaluations[caseItem.caseId];
+            eval.mainWeakness = document.getElementById('mainWeakness').value;
+            eval.improvement = document.getElementById('improvement').value;
+
+            const disp = document.querySelector('input[name="disposition"]:checked');
+            if (disp) eval.disposition = disp.value;
+
+            if (currentIndex < caseData.length - 1) {
                 loadCase(currentIndex + 1);
-            } else {
-                showMessage('All cases completed! Press Ctrl+Shift+E to export.', 'success');
-                exportCSV();
             }
         }
 
         function previousCase() {
+            // Save current case data
+            const caseItem = caseData[currentIndex];
+            const eval = evaluations[caseItem.caseId];
+            eval.mainWeakness = document.getElementById('mainWeakness').value;
+            eval.improvement = document.getElementById('improvement').value;
+
+            const disp = document.querySelector('input[name="disposition"]:checked');
+            if (disp) eval.disposition = disp.value;
+
             if (currentIndex > 0) {
-                saveCase();
                 loadCase(currentIndex - 1);
             }
         }
 
-        function showMessage(msg, type) {
-            const el = document.getElementById('message');
-            el.innerHTML = `<div class="${type}-msg">${msg}</div>`;
-            setTimeout(() => el.innerHTML = '', 4000);
-        }
-
         function exportCSV() {
-            let csv = 'Case ID,Formula,Visual Realism,Operational Relevance,Target Usefulness,Transfer-Learning,Disposition,Weakness,Improvement,Notes\n';
-            allCases.forEach(c => {
-                const e = evaluations[c.caseId];
-                if (!e.disposition) return;
-                csv += [
-                    c.caseId, c.formulaCode,
-                    e.visualRealism, e.operationalRelevance, e.targetUsefulness, e.transferLearning,
-                    e.disposition,
-                    `"${e.weakness.replace(/"/g, '""')}"`,
-                    `"${e.improvement.replace(/"/g, '""')}"`,
-                    `"${e.notes.replace(/"/g, '""')}"`
-                ].join(',') + '\n';
+            const rows = [];
+            const header = ['Case ID', 'Image ID', 'Formula Code',
+                'Prompt-Q1', 'Prompt-Q2', 'Prompt-Q3', 'Prompt-Q4', 'Prompt-Q5',
+                'Image-Q1', 'Image-Q2', 'Image-Q3', 'Image-Q4', 'Image-Q5', 'Image-Q6',
+                'Alignment-Q1', 'Alignment-Q2', 'Alignment-Q3',
+                'Disposition', 'Main Weakness', 'What to Improve'];
+            rows.push(header);
+
+            caseData.forEach(caseItem => {
+                const eval = evaluations[caseItem.caseId];
+                const row = [
+                    caseItem.caseId,
+                    caseItem.imageId || '',
+                    caseItem.formulaCode,
+                    ...PROMPT_STATEMENTS.map((_, i) => eval.prompt[i] || ''),
+                    ...IMAGE_STATEMENTS.map((_, i) => eval.image[i] || ''),
+                    ...ALIGNMENT_STATEMENTS.map((_, i) => eval.alignment[i] || ''),
+                    eval.disposition || '',
+                    `"${(eval.mainWeakness || '').replace(/"/g, '""')}"`,
+                    `"${(eval.improvement || '').replace(/"/g, '""')}"`
+                ];
+                rows.push(row);
             });
-            const blob = new Blob([csv], {type: 'text/csv'});
-            const url = URL.createObjectURL(blob);
+
+            const csv = rows.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'evaluation_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.download = 'evaluations.csv';
             a.click();
+            window.URL.revokeObjectURL(url);
         }
 
-        // Keyboard shortcut for export
-        document.addEventListener('keydown', e => {
-            if (e.ctrlKey && e.shiftKey && e.key === 'E') {
-                exportCSV();
+        // Setup disposition radio button styling
+        document.addEventListener('change', function(e) {
+            if (e.target.name === 'disposition') {
+                document.querySelectorAll('.disposition-option').forEach(opt => {
+                    opt.classList.toggle('selected', opt.querySelector('input').checked);
+                });
             }
         });
 
-        // Start
-        init();
+        // Initialize on load
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
