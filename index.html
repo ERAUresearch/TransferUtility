@@ -518,10 +518,129 @@
         .hidden {
             display: none;
         }
+
+        .error-highlight {
+            border-radius: 6px;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.4) !important;
+            transition: box-shadow 0.3s ease;
+        }
+
+        textarea.error-highlight {
+            border-color: #ef4444 !important;
+        }
+
+        .inline-error-msg {
+            animation: fadeIn 0.3s ease-in;
+            margin-top: 8px;
+            margin-bottom: 8px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Additional styles for the consent form */
+        #consent-page {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 24px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 15px;
+        }
+        
+        #consent-page h1 {
+            color: #1e3a8a;
+            font-size: 24px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        #consent-page h2 {
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 24px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        #consent-page p {
+            margin-bottom: 16px;
+            line-height: 1.5;
+            color: #4b5563;
+        }
+
+        #consent-page strong {
+            color: #1f2937;
+        }
+
+        .consent-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn-agree {
+            background: #10b981;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-agree:hover {
+            background: #059669;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-disagree {
+            background: #ef4444;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-disagree:hover {
+            background: #dc2626;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <!-- INFORMED CONSENT PAGE -->
+    <div id="consent-page">
+        <h1>INFORMED CONSENT FORM</h1>
+        <h2>Subject Matter Expert Evaluation of Generative AI–Based Synthetic Airport Drone Detection Images for Dataset Refinement and Transfer Utility Assessment</h2>
+
+        <p><strong>Purpose of this Research:</strong> I am asking you to take part in a research project for the purpose of evaluating how domain experts assess synthetic airport drone-detection images generated through a structured prompting process. During this study, you will be asked to complete an online survey in which you review sampled prompt-image pairs and provide structured ratings and optional comments regarding prompt quality, image realism, operational relevance, and usefulness for dataset development. Completion of the survey will take approximately 90–120 minutes.</p>
+
+        <p><strong>Risks or discomforts:</strong> The risks of participating in this study are no greater than what is experienced in daily life.</p>
+
+        <p><strong>Benefits:</strong> While there are no direct benefits to you as a participant, your assistance in this research may help improve methods for developing and evaluating synthetic datasets for aviation-related applications.</p>
+
+        <p><strong>Confidentiality of records:</strong> Your individual information will be protected in all data resulting from this study. Your responses to this survey will be treated as confidential. No personal information will be collected other than limited professional background descriptors. Any identifying information used for survey administration will be stored separately from survey responses. Survey data will be stored in a password-protected file on a password-protected computer accessible only to the research team. Information collected as part of this research will not be used or distributed for future research studies.</p>
+
+        <p><strong>Contact:</strong> If you have any questions or would like additional information about this study, please contact Joel Samu at SAMUJ@my.erau.edu, or the faculty member overseeing this project, Dr. Chuyang Yang, at yangc11@erau.edu. For any concerns or questions as a participant in this research, contact the Institutional Review Board (IRB) at 386-226-7179 or via email teri.gabriel@erau.edu.</p>
+
+        <p><strong>Voluntary Participation:</strong> Your participation in this study is completely voluntary. You may discontinue your participation at any time without penalty or loss of benefits to which you are otherwise entitled. Should you wish to discontinue the research at any time, no information collected will be used.</p>
+
+        <p><strong>CONSENT.</strong> By clicking AGREE below, I certify that I understand the information on this form, and voluntarily agree to participate in the study.</p>
+
+        <p>If you do not wish to participate in the study, simply close the browser or click DISAGREE which will direct you out of the study.</p>
+
+        <p><em>Please print a copy of this form for your records. A copy of this form can also be requested from Joel Samu at SAMUJ@my.erau.edu.</em></p>
+
+        <div class="consent-actions">
+            <button class="btn-agree" onclick="acceptConsent()">AGREE</button>
+            <button class="btn-disagree" onclick="declineConsent()">DISAGREE</button>
+        </div>
+    </div>
+
+
+    <!-- MAIN SURVEY (Hidden by default) -->
+    <div class="container" id="main-survey-container" style="display: none;">
         <header>
             <h1>SME Evaluation Form</h1>
             <p style="font-size: 14px; margin-bottom: 0;">Drone Detection Dataset Review</p>
@@ -529,8 +648,6 @@
                 <div class="progress-bar" id="progressBar"></div>
             </div>
         </header>
-
-        <div id="validationError" class="validation-error hidden"></div>
 
         <div class="content">
         <!-- Case Information -->
@@ -613,7 +730,7 @@
         <!-- Disposition -->
         <div class="disposition-section">
             <h3>Final Disposition</h3>
-            <div class="disposition-options">
+            <div class="disposition-options" id="dispositionOptions">
                 <label class="disposition-option">
                     <input type="radio" name="disposition" value="Retain">
                     <span><strong>Retain</strong> - The case is suitable for inclusion in the candidate dataset without major revision.</span>
@@ -660,6 +777,52 @@
     </div>
 
     <script>
+        // --- NEW CONSENT LOGIC ---
+        function acceptConsent() {
+            document.getElementById('consent-page').style.display = 'none';
+            document.getElementById('main-survey-container').style.display = 'block';
+        }
+
+        function declineConsent() {
+            // Browsers often block window.close() unless the script opened the tab.
+            // We'll try to close it, and provide a fallback message just in case.
+            window.close();
+            
+            document.body.innerHTML = `
+                <div style="max-width: 600px; margin: 60px auto; padding: 32px; text-align: center; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                    <h2 style="color: #1e3a8a; margin-bottom: 16px; font-size: 24px;">Participation Declined</h2>
+                    <p style="color: #4b5563; font-size: 16px; margin-bottom: 16px;">You have chosen not to participate in this study. No data has been collected.</p>
+                    <p style="color: #4b5563; font-size: 16px; font-weight: 600;">You may now safely close this browser tab.</p>
+                </div>
+            `;
+        }
+        // --- END CONSENT LOGIC ---
+
+        function clearErrors() {
+            document.querySelectorAll('.error-highlight').forEach(el => el.classList.remove('error-highlight'));
+            document.querySelectorAll('.inline-error-msg').forEach(el => el.remove());
+        }
+
+        function showError(elementId, message) {
+            clearErrors();
+            const el = document.getElementById(elementId);
+            if (!el) return;
+
+            el.classList.add('error-highlight');
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'validation-error inline-error-msg';
+            msgDiv.textContent = message;
+
+            el.parentNode.insertBefore(msgDiv, el);
+            
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            if (el.tagName === 'TEXTAREA') {
+                el.focus();
+            }
+        }
+
         // Prompt evaluation statements
         const PROMPT_STATEMENTS = [
             "The prompt describes an operationally meaningful airport scenario.",
@@ -692,8 +855,42 @@
 
         async function init() {
             try {
-                const response = await fetch('data.json');
-                const data = await response.json();
+                let data;
+                try {
+                    // Try to fetch the file, but provide a fallback if it fails in sandboxes/iframes
+                    const response = await fetch('data.json');
+                    data = await response.json();
+                } catch (fetchError) {
+                    console.warn('Could not fetch data.json, using fallback sample data.', fetchError);
+                    data = {
+                        cases: [
+                            {
+                                caseId: "CASE-001",
+                                imageId: "IMG-001",
+                                formulaCode: "A1-B2-C3",
+                                viewpoint: "Ground Level",
+                                target: "Small Quadcopter",
+                                environment: "Clear Runway",
+                                lighting: "Daylight/Sunny",
+                                distractors: "None",
+                                imagePath: "https://placehold.co/600x400/eeeeee/333333?text=Sample+Drone+Image+1",
+                                fullPrompt: "A clear view of a small quadcopter over a sunny runway from ground level."
+                            },
+                            {
+                                caseId: "CASE-002",
+                                imageId: "IMG-002",
+                                formulaCode: "A2-B1-C1",
+                                viewpoint: "Elevated/Tower",
+                                target: "Fixed-wing UAV",
+                                environment: "Airport Perimeter",
+                                lighting: "Overcast",
+                                distractors: "Birds, Vehicles",
+                                imagePath: "https://placehold.co/600x400/eeeeee/333333?text=Sample+Drone+Image+2",
+                                fullPrompt: "An elevated view of a fixed-wing UAV near the airport perimeter under an overcast sky with birds and vehicles in the background."
+                            }
+                        ]
+                    };
+                }
                 caseData = data.cases;
 
                 // Initialize evaluations object
@@ -712,7 +909,7 @@
 
                 loadCase(0);
             } catch (error) {
-                console.error('Error loading data:', error);
+                console.error('Error initializing data:', error);
             }
         }
 
@@ -759,8 +956,8 @@
             // Update progress
             updateProgress();
 
-            // Clear validation error
-            document.getElementById('validationError').classList.add('hidden');
+            // Clear any previous inline errors
+            clearErrors();
         }
 
         function renderMatrix(elementId, statements, type, caseId) {
@@ -789,6 +986,7 @@
         }
 
         function setRating(caseId, type, index, rating) {
+            clearErrors();
             evaluations[caseId][type][index] = rating;
             renderMatrix(type + 'Matrix',
                 type === 'prompt' ? PROMPT_STATEMENTS :
@@ -816,33 +1014,39 @@
             const caseItem = caseData[currentIndex];
             const eval = evaluations[caseItem.caseId];
 
-            // Check all ratings
+            // Check all ratings individually so we can scroll to the exact matrix
             const prompts = Object.values(eval.prompt).filter(v => v !== undefined);
-            const images = Object.values(eval.image).filter(v => v !== undefined);
-            const alignments = Object.values(eval.alignment).filter(v => v !== undefined);
+            if (prompts.length < PROMPT_STATEMENTS.length) {
+                return { valid: false, error: 'Please rate all dimensions for Prompt Evaluation.', elementId: 'promptMatrix' };
+            }
 
-            if (prompts.length < PROMPT_STATEMENTS.length ||
-                images.length < IMAGE_STATEMENTS.length ||
-                alignments.length < ALIGNMENT_STATEMENTS.length) {
-                return { valid: false, error: 'Please rate all dimensions before proceeding.' };
+            const images = Object.values(eval.image).filter(v => v !== undefined);
+            if (images.length < IMAGE_STATEMENTS.length) {
+                return { valid: false, error: 'Please rate all dimensions for Image Evaluation.', elementId: 'imageMatrix' };
+            }
+
+            const alignments = Object.values(eval.alignment).filter(v => v !== undefined);
+            if (alignments.length < ALIGNMENT_STATEMENTS.length) {
+                return { valid: false, error: 'Please rate all dimensions for Prompt-Image Alignment.', elementId: 'alignmentMatrix' };
             }
 
             if (!eval.disposition) {
-                return { valid: false, error: 'Please select a final disposition before proceeding.' };
+                return { valid: false, error: 'Please select a final disposition.', elementId: 'dispositionOptions' };
+            }
+
+            if (!eval.mainWeakness || eval.mainWeakness.trim() === '') {
+                return { valid: false, error: 'Please enter the main weakness of this case.', elementId: 'mainWeakness' };
+            }
+
+            if (!eval.improvement || eval.improvement.trim() === '') {
+                return { valid: false, error: 'Please enter what should be improved.', elementId: 'improvement' };
             }
 
             return { valid: true };
         }
 
         function nextCase() {
-            const validation = validateCase();
-            if (!validation.valid) {
-                document.getElementById('validationError').textContent = validation.error;
-                document.getElementById('validationError').classList.remove('hidden');
-                return;
-            }
-
-            // Save current case data
+            // Save current case data FIRST before checking validation
             const caseItem = caseData[currentIndex];
             const eval = evaluations[caseItem.caseId];
             eval.mainWeakness = document.getElementById('mainWeakness').value;
@@ -850,6 +1054,12 @@
 
             const disp = document.querySelector('input[name="disposition"]:checked');
             if (disp) eval.disposition = disp.value;
+
+            const validation = validateCase();
+            if (!validation.valid) {
+                showError(validation.elementId, validation.error);
+                return;
+            }
 
             if (currentIndex < caseData.length - 1) {
                 loadCase(currentIndex + 1);
@@ -909,9 +1119,17 @@
         // Setup disposition radio button styling
         document.addEventListener('change', function(e) {
             if (e.target.name === 'disposition') {
+                clearErrors();
                 document.querySelectorAll('.disposition-option').forEach(opt => {
                     opt.classList.toggle('selected', opt.querySelector('input').checked);
                 });
+            }
+        });
+
+        // Clear error highlights when typing in textareas
+        document.addEventListener('input', function(e) {
+            if (e.target.tagName === 'TEXTAREA') {
+                clearErrors();
             }
         });
 
