@@ -516,7 +516,7 @@
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
         .error-highlight {
@@ -540,7 +540,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Additional styles for the consent form */
+        /* --- Consent & Instruction Styles --- */
         #consent-page {
             max-width: 800px;
             margin: 40px auto;
@@ -584,27 +584,88 @@
             border-top: 1px solid #e5e7eb;
         }
 
-        .btn-agree {
-            background: #10b981;
+        .btn-agree { background: #10b981; color: white; flex: 1; }
+        .btn-agree:hover { background: #059669; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); }
+        .btn-disagree { background: #ef4444; color: white; flex: 1; }
+        .btn-disagree:hover { background: #dc2626; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); }
+
+        /* --- Custom Modal Overlay (Instructions) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 2000; padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: modalPopIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes modalPopIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .modal-content h2 { color: #1e3a8a; margin-bottom: 16px; font-size: 24px; }
+        .modal-content ul { margin: 16px 0 24px 20px; color: #4b5563; line-height: 1.6; }
+        .modal-content li { margin-bottom: 8px; }
+        .modal-content li strong { color: #1f2937; }
+
+        /* --- Onboarding Tour Styles --- */
+        #tour-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.55); z-index: 9000; display: none;
+            transition: opacity 0.3s;
+        }
+        .tour-highlight {
+            position: relative;
+            z-index: 9001 !important;
+            box-shadow: 0 0 0 4px #3b82f6, 0 8px 24px rgba(0,0,0,0.2) !important;
+            border-radius: 6px;
+            background: white;
+            pointer-events: none; /* prevent clicking while tour is active */
+        }
+        #tour-tooltip {
+            position: absolute;
+            background: #1e3a8a;
             color: white;
-            flex: 1;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            z-index: 9002;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            animation: tooltipFadeIn 0.3s ease;
         }
+        @keyframes tooltipFadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #tour-tooltip::before {
+            content: ''; position: absolute; top: -8px; left: 20px;
+            border-left: 8px solid transparent; border-right: 8px solid transparent;
+            border-bottom: 8px solid #1e3a8a;
+        }
+        #tour-tooltip.point-up::before {
+            top: auto; bottom: -8px; border-bottom: none; border-top: 8px solid #1e3a8a;
+        }
+        #tour-tooltip h3 { font-size: 18px; margin-bottom: 8px; color: #60a5fa; }
+        #tour-tooltip p { font-size: 15px; margin-bottom: 16px; line-height: 1.4; color: #e5e7eb; }
+        #tour-tooltip .tour-footer { display: flex; justify-content: space-between; align-items: center; }
+        #tour-tooltip .tour-progress { font-size: 12px; color: #9ca3af; font-weight: bold; }
+        #tour-tooltip button {
+            background: #3b82f6; color: white; padding: 8px 16px; min-height: unset;
+            font-size: 14px; border-radius: 4px; box-shadow: none;
+        }
+        #tour-tooltip button:hover { background: #2563eb; }
+        
+        /* Stop scrolling behavior during tour on body */
+        body.tour-active { overflow-x: hidden; }
 
-        .btn-agree:hover {
-            background: #059669;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-disagree {
-            background: #ef4444;
-            color: white;
-            flex: 1;
-        }
-
-        .btn-disagree:hover {
-            background: #dc2626;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
     </style>
 </head>
 <body>
@@ -638,9 +699,35 @@
         </div>
     </div>
 
+    <!-- INSTRUCTIONS MODAL (Hidden initially) -->
+    <div id="instructions-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2>Evaluation Mission Briefing 🚁</h2>
+            <p>Welcome! Before we begin, here is what to expect from this survey:</p>
+            <ul>
+                <li><strong>Time Commitment:</strong> Approximately 90–120 minutes. You can proceed at your own pace.</li>
+                <li><strong>The Task:</strong> For each case, review a text prompt and the synthetic drone image it generated.</li>
+                <li><strong>The Rating:</strong> Rate the prompt, the image realism, and how well they match on a scale of 1 to 5.</li>
+                <li><strong>The Verdict:</strong> Give a final decision on whether to Retain, Refine, or Drop the image from the dataset, along with brief feedback.</li>
+            </ul>
+            <p style="margin-bottom: 24px; color: #4b5563;">Don't worry, we'll give you a quick guided tour on the first page to show you exactly where everything is!</p>
+            <button class="btn-primary" onclick="startSurveyAndTour()">Okay, Let's Go!</button>
+        </div>
+    </div>
+
+    <!-- TOUR OVERLAY & TOOLTIP -->
+    <div id="tour-overlay"></div>
+    <div id="tour-tooltip">
+        <h3 id="tour-title">Title</h3>
+        <p id="tour-text">Text</p>
+        <div class="tour-footer">
+            <span class="tour-progress" id="tour-progress">1/6</span>
+            <button id="tour-next-btn" onclick="nextTourStep()">Next</button>
+        </div>
+    </div>
 
     <!-- MAIN SURVEY (Hidden by default) -->
-    <div class="container" id="main-survey-container" style="display: none;">
+    <div class="container hidden" id="main-survey-container">
         <header>
             <h1>SME Evaluation Form</h1>
             <p style="font-size: 14px; margin-bottom: 0;">Drone Detection Dataset Review</p>
@@ -650,144 +737,269 @@
         </header>
 
         <div class="content">
-        <!-- Case Information -->
-        <div class="case-info">
-            <div class="info-item">
-                <div class="info-label">Case ID</div>
-                <div class="info-value" id="caseId">-</div>
+            <!-- Case Information -->
+            <div class="case-info" id="tour-step-info">
+                <div class="info-item">
+                    <div class="info-label">Case ID</div>
+                    <div class="info-value" id="caseId">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Image ID</div>
+                    <div class="info-value" id="imageId">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Formula Code</div>
+                    <div class="info-value" id="formulaCode">-</div>
+                </div>
             </div>
-            <div class="info-item">
-                <div class="info-label">Image ID</div>
-                <div class="info-value" id="imageId">-</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Formula Code</div>
-                <div class="info-value" id="formulaCode">-</div>
-            </div>
-        </div>
 
-        <!-- Prompt Structure -->
-        <div class="prompt-structure">
-            <h3>Prompt Structure</h3>
-            <div class="structure-grid">
-                <div class="structure-item">
-                    <div class="structure-item-label">Viewpoint</div>
-                    <div class="structure-item-value" id="viewpoint">-</div>
-                </div>
-                <div class="structure-item">
-                    <div class="structure-item-label">Target/Drone Depiction</div>
-                    <div class="structure-item-value" id="target">-</div>
-                </div>
-                <div class="structure-item">
-                    <div class="structure-item-label">Environment</div>
-                    <div class="structure-item-value" id="environment">-</div>
-                </div>
-                <div class="structure-item">
-                    <div class="structure-item-label">Lighting/Weather</div>
-                    <div class="structure-item-value" id="lighting">-</div>
-                </div>
-                <div class="structure-item">
-                    <div class="structure-item-label">Distractors/Background</div>
-                    <div class="structure-item-value" id="distractors">-</div>
+            <!-- Prompt Structure -->
+            <div class="prompt-structure" id="tour-step-prompt">
+                <h3>Prompt Structure</h3>
+                <div class="structure-grid">
+                    <div class="structure-item">
+                        <div class="structure-item-label">Viewpoint</div>
+                        <div class="structure-item-value" id="viewpoint">-</div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-item-label">Target/Drone Depiction</div>
+                        <div class="structure-item-value" id="target">-</div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-item-label">Environment</div>
+                        <div class="structure-item-value" id="environment">-</div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-item-label">Lighting/Weather</div>
+                        <div class="structure-item-value" id="lighting">-</div>
+                    </div>
+                    <div class="structure-item">
+                        <div class="structure-item-label">Distractors/Background</div>
+                        <div class="structure-item-value" id="distractors">-</div>
+                    </div>
                 </div>
             </div>
-        </div>
         </div>
 
         <!-- Generated Image -->
-        <div class="image-section">
+        <div class="image-section" id="tour-step-image">
             <img id="caseImage" alt="Generated drone detection image" onerror="this.parentElement.innerHTML='<div class=&quot;image-error&quot;>Image not found</div>'">
         </div>
 
         <div class="content">
-        <!-- Full Prompt Text -->
-        <div class="prompt-text-section">
-            <h3>Full Prompt Text</h3>
-            <div class="prompt-text" id="promptText">-</div>
-        </div>
-
-        <!-- Three Evaluation Matrices -->
-        <div class="matrices-container">
-            <!-- Prompt Evaluation -->
-            <div class="matrix">
-                <h3>Prompt Evaluation</h3>
-                <div id="promptMatrix"></div>
+            <!-- Full Prompt Text -->
+            <div class="prompt-text-section">
+                <h3>Full Prompt Text</h3>
+                <div class="prompt-text" id="promptText">-</div>
             </div>
 
-            <!-- Image Evaluation -->
-            <div class="matrix">
-                <h3>Image Evaluation</h3>
-                <div id="imageMatrix"></div>
+            <!-- Three Evaluation Matrices -->
+            <div class="matrices-container" id="tour-step-matrices">
+                <!-- Prompt Evaluation -->
+                <div class="matrix">
+                    <h3>Prompt Evaluation</h3>
+                    <div id="promptMatrix"></div>
+                </div>
+
+                <!-- Image Evaluation -->
+                <div class="matrix">
+                    <h3>Image Evaluation</h3>
+                    <div id="imageMatrix"></div>
+                </div>
+
+                <!-- Prompt-Image Alignment -->
+                <div class="matrix">
+                    <h3>Prompt-Image Alignment</h3>
+                    <div id="alignmentMatrix"></div>
+                </div>
             </div>
 
-            <!-- Prompt-Image Alignment -->
-            <div class="matrix">
-                <h3>Prompt-Image Alignment</h3>
-                <div id="alignmentMatrix"></div>
+            <!-- Disposition -->
+            <div class="disposition-section" id="tour-step-disposition">
+                <h3>Final Disposition</h3>
+                <div class="disposition-options" id="dispositionOptions">
+                    <label class="disposition-option">
+                        <input type="radio" name="disposition" value="Retain">
+                        <span><strong>Retain</strong> - The case is suitable for inclusion in the candidate dataset without major revision.</span>
+                    </label>
+                    <label class="disposition-option">
+                        <input type="radio" name="disposition" value="Refine and regenerate">
+                        <span><strong>Refine and regenerate</strong> - The case has potential but should be improved through prompt modification and regeneration.</span>
+                    </label>
+                    <label class="disposition-option">
+                        <input type="radio" name="disposition" value="Drop">
+                        <span><strong>Drop</strong> - The case is not suitable for further use in the dataset.</span>
+                    </label>
+                </div>
             </div>
-        </div>
 
-        <!-- Disposition -->
-        <div class="disposition-section">
-            <h3>Final Disposition</h3>
-            <div class="disposition-options" id="dispositionOptions">
-                <label class="disposition-option">
-                    <input type="radio" name="disposition" value="Retain">
-                    <span><strong>Retain</strong> - The case is suitable for inclusion in the candidate dataset without major revision.</span>
-                </label>
-                <label class="disposition-option">
-                    <input type="radio" name="disposition" value="Refine and regenerate">
-                    <span><strong>Refine and regenerate</strong> - The case has potential but should be improved through prompt modification and regeneration.</span>
-                </label>
-                <label class="disposition-option">
-                    <input type="radio" name="disposition" value="Drop">
-                    <span><strong>Drop</strong> - The case is not suitable for further use in the dataset.</span>
-                </label>
+            <!-- Comments -->
+            <div class="comments-section" id="tour-step-comments">
+                <h3>Diagnostic Comments</h3>
+                <div class="comment-field">
+                    <label class="comment-label">Main weakness of this case</label>
+                    <textarea class="comment-textarea" id="mainWeakness" placeholder="e.g., unrealistic background, drone too indistinct, poor airport relevance..."></textarea>
+                </div>
+                <div class="comment-field">
+                    <label class="comment-label">What should be improved?</label>
+                    <textarea class="comment-textarea" id="improvement" placeholder="e.g., change viewpoint, reduce clutter, strengthen target visibility..."></textarea>
+                </div>
             </div>
-        </div>
 
-        <!-- Comments -->
-        <div class="comments-section">
-            <h3>Diagnostic Comments</h3>
-            <div class="comment-field">
-                <label class="comment-label">Main weakness of this case</label>
-                <textarea class="comment-textarea" id="mainWeakness" placeholder="e.g., unrealistic background, drone too indistinct, poor airport relevance..."></textarea>
+            <!-- Navigation -->
+            <div class="nav-buttons" id="tour-step-nav">
+                <button class="btn-secondary" id="prevBtn" onclick="previousCase()">← Previous</button>
+                <button class="btn-primary" id="nextBtn" onclick="nextCase()">Next →</button>
             </div>
-            <div class="comment-field">
-                <label class="comment-label">What should be improved?</label>
-                <textarea class="comment-textarea" id="improvement" placeholder="e.g., change viewpoint, reduce clutter, strengthen target visibility..."></textarea>
+
+            <!-- Progress Bar -->
+            <div class="progress-section">
+                <div class="progress">
+                    <div class="progress-bar" id="progressBarBottom"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- Navigation -->
-        <div class="nav-buttons">
-            <button class="btn-secondary" id="prevBtn" onclick="previousCase()">← Previous</button>
-            <button class="btn-primary" id="nextBtn" onclick="nextCase()">Next →</button>
-        </div>
-
-        <!-- Progress Bar -->
-        <div class="progress-section">
-            <div class="progress">
-                <div class="progress-bar" id="progressBarBottom"></div>
-            </div>
-        </div>
-
-        <button class="btn-export" id="exportBtn" onclick="exportCSV()">↓ Export Results as CSV</button>
+            <button class="btn-export" id="exportBtn" onclick="exportCSV()">↓ Export Results as CSV</button>
         </div>
     </div>
 
     <script>
-        // --- NEW CONSENT LOGIC ---
+        // --- ONBOARDING TOUR LOGIC ---
+        const tourSteps = [
+            {
+                targetId: 'tour-step-info',
+                title: 'Case Metadata',
+                text: 'Here you will find the identification details for the current drone scenario you are evaluating.'
+            },
+            {
+                targetId: 'tour-step-prompt',
+                title: 'Prompt Structure',
+                text: 'This breaks down the exact conditions requested from the AI, including lighting, environment, and target type.'
+            },
+            {
+                targetId: 'tour-step-image',
+                title: 'The Generated Image',
+                text: 'Review this synthetic image closely. Analyze if the drone is visible and if the environment looks realistic.'
+            },
+            {
+                targetId: 'tour-step-matrices',
+                title: 'Evaluation Matrices',
+                text: 'Rate the prompt quality, the image realism, and how well the image aligns with the requested prompt (1 = Poor, 5 = Excellent).'
+            },
+            {
+                targetId: 'tour-step-disposition',
+                title: 'Final Verdict & Comments',
+                text: 'Select your final decision (Retain, Refine, or Drop). You must also leave brief feedback on weaknesses and improvements below.'
+            },
+            {
+                targetId: 'tour-step-nav',
+                title: 'Navigation',
+                text: 'Click Next to proceed when you are done. The Export button will appear here once you finish all cases. Let\'s begin!'
+            }
+        ];
+
+        let currentTourIndex = 0;
+
+        function startTour() {
+            document.body.classList.add('tour-active');
+            document.getElementById('tour-overlay').style.display = 'block';
+            document.getElementById('tour-tooltip').style.display = 'block';
+            currentTourIndex = 0;
+            showTourStep();
+        }
+
+        function showTourStep() {
+            // Remove highlight from all previous targets
+            document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+
+            if (currentTourIndex >= tourSteps.length) {
+                endTour();
+                return;
+            }
+
+            const step = tourSteps[currentTourIndex];
+            const targetEl = document.getElementById(step.targetId);
+            const tooltip = document.getElementById('tour-tooltip');
+
+            if (!targetEl) {
+                currentTourIndex++;
+                showTourStep();
+                return;
+            }
+
+            // Scroll into view gently
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Wait a brief moment for scroll to settle before positioning tooltip
+            setTimeout(() => {
+                targetEl.classList.add('tour-highlight');
+
+                document.getElementById('tour-title').textContent = step.title;
+                document.getElementById('tour-text').textContent = step.text;
+                document.getElementById('tour-progress').textContent = `${currentTourIndex + 1}/${tourSteps.length}`;
+                
+                const btn = document.getElementById('tour-next-btn');
+                if (currentTourIndex === tourSteps.length - 1) {
+                    btn.textContent = 'Got it! Start Survey';
+                } else {
+                    btn.textContent = 'Next';
+                }
+
+                // Calculate tooltip position
+                const rect = targetEl.getBoundingClientRect();
+                const tooltipRect = tooltip.getBoundingClientRect();
+                
+                let topPos = rect.bottom + window.scrollY + 15;
+                let leftPos = rect.left + window.scrollX;
+                
+                // Adjust left if off-screen
+                if (leftPos + tooltipRect.width > window.innerWidth) {
+                    leftPos = window.innerWidth - tooltipRect.width - 20;
+                }
+                if (leftPos < 10) leftPos = 10;
+
+                // Adjust top if off-screen (point tooltip UP instead)
+                if (topPos + tooltipRect.height > window.scrollY + window.innerHeight) {
+                    topPos = rect.top + window.scrollY - tooltipRect.height - 15;
+                    tooltip.classList.add('point-up');
+                } else {
+                    tooltip.classList.remove('point-up');
+                }
+
+                // Exceptions for specific layout issues (like the full-width image)
+                if (step.targetId === 'tour-step-image') {
+                     leftPos = window.innerWidth / 2 - 150; // Center it horizontally
+                }
+
+                tooltip.style.top = `${topPos}px`;
+                tooltip.style.left = `${leftPos}px`;
+            }, 300);
+        }
+
+        function nextTourStep() {
+            currentTourIndex++;
+            showTourStep();
+        }
+
+        function endTour() {
+            document.body.classList.remove('tour-active');
+            document.getElementById('tour-overlay').style.display = 'none';
+            document.getElementById('tour-tooltip').style.display = 'none';
+            document.querySelectorAll('.tour-highlight').forEach(el => el.classList.remove('tour-highlight'));
+            
+            // Scroll back to top to start smoothly
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+
+        // --- CONSENT & WORKFLOW LOGIC ---
         function acceptConsent() {
             document.getElementById('consent-page').style.display = 'none';
-            document.getElementById('main-survey-container').style.display = 'block';
+            document.getElementById('instructions-modal').classList.remove('hidden');
         }
 
         function declineConsent() {
-            // Browsers often block window.close() unless the script opened the tab.
-            // We'll try to close it, and provide a fallback message just in case.
             window.close();
-            
             document.body.innerHTML = `
                 <div style="max-width: 600px; margin: 60px auto; padding: 32px; text-align: center; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                     <h2 style="color: #1e3a8a; margin-bottom: 16px; font-size: 24px;">Participation Declined</h2>
@@ -796,8 +1008,18 @@
                 </div>
             `;
         }
-        // --- END CONSENT LOGIC ---
 
+        function startSurveyAndTour() {
+            document.getElementById('instructions-modal').classList.add('hidden');
+            document.getElementById('main-survey-container').classList.remove('hidden');
+            
+            // Only trigger the tour on the very first visit
+            if(currentIndex === 0) {
+                startTour();
+            }
+        }
+
+        // --- MAIN SURVEY LOGIC ---
         function clearErrors() {
             document.querySelectorAll('.error-highlight').forEach(el => el.classList.remove('error-highlight'));
             document.querySelectorAll('.inline-error-msg').forEach(el => el.remove());
@@ -823,7 +1045,6 @@
             }
         }
 
-        // Prompt evaluation statements
         const PROMPT_STATEMENTS = [
             "The prompt describes an operationally meaningful airport scenario.",
             "The prompt includes sufficient detail to guide useful image generation.",
@@ -832,7 +1053,6 @@
             "The prompt is suitable for synthetic dataset development."
         ];
 
-        // Image evaluation statements
         const IMAGE_STATEMENTS = [
             "The image appears visually realistic.",
             "The airport environment appears operationally plausible.",
@@ -842,7 +1062,6 @@
             "The image is overall useful for synthetic dataset development."
         ];
 
-        // Alignment evaluation statements
         const ALIGNMENT_STATEMENTS = [
             "The image reflects the intended prompt conditions.",
             "The image is consistent with the prompt structure shown.",
@@ -857,7 +1076,6 @@
             try {
                 let data;
                 try {
-                    // Try to fetch the file, but provide a fallback if it fails in sandboxes/iframes
                     const response = await fetch('data.json');
                     data = await response.json();
                 } catch (fetchError) {
@@ -893,16 +1111,11 @@
                 }
                 caseData = data.cases;
 
-                // Initialize evaluations object
                 caseData.forEach(c => {
                     if (!evaluations[c.caseId]) {
                         evaluations[c.caseId] = {
-                            prompt: {},
-                            image: {},
-                            alignment: {},
-                            disposition: null,
-                            mainWeakness: '',
-                            improvement: ''
+                            prompt: {}, image: {}, alignment: {},
+                            disposition: null, mainWeakness: '', improvement: ''
                         };
                     }
                 });
@@ -919,30 +1132,23 @@
             currentIndex = index;
             const caseItem = caseData[index];
 
-            // Update case info
             document.getElementById('caseId').textContent = caseItem.caseId;
             document.getElementById('imageId').textContent = caseItem.imageId || '-';
             document.getElementById('formulaCode').textContent = caseItem.formulaCode;
 
-            // Update prompt structure
             document.getElementById('viewpoint').textContent = caseItem.viewpoint || '-';
             document.getElementById('target').textContent = caseItem.target || '-';
             document.getElementById('environment').textContent = caseItem.environment || '-';
             document.getElementById('lighting').textContent = caseItem.lighting || '-';
             document.getElementById('distractors').textContent = caseItem.distractors || '-';
 
-            // Update image
             document.getElementById('caseImage').src = caseItem.imagePath || '';
-
-            // Update full prompt text
             document.getElementById('promptText').textContent = caseItem.fullPrompt || '-';
 
-            // Render matrices
             renderMatrix('promptMatrix', PROMPT_STATEMENTS, 'prompt', caseItem.caseId);
             renderMatrix('imageMatrix', IMAGE_STATEMENTS, 'image', caseItem.caseId);
             renderMatrix('alignmentMatrix', ALIGNMENT_STATEMENTS, 'alignment', caseItem.caseId);
 
-            // Restore disposition and comments
             const eval = evaluations[caseItem.caseId];
             const dispositionRadios = document.querySelectorAll('input[name="disposition"]');
             dispositionRadios.forEach(radio => {
@@ -953,10 +1159,7 @@
             document.getElementById('mainWeakness').value = eval.mainWeakness || '';
             document.getElementById('improvement').value = eval.improvement || '';
 
-            // Update progress
             updateProgress();
-
-            // Clear any previous inline errors
             clearErrors();
         }
 
@@ -1001,7 +1204,6 @@
             document.getElementById('progressBarBottom').style.width = progress + '%';
             document.querySelector('header p').textContent = `Case ${currentIndex + 1} of ${caseData.length}`;
 
-            // Show export button only on last case
             const exportBtn = document.getElementById('exportBtn');
             if (currentIndex === caseData.length - 1) {
                 exportBtn.classList.add('show');
@@ -1014,7 +1216,6 @@
             const caseItem = caseData[currentIndex];
             const eval = evaluations[caseItem.caseId];
 
-            // Check all ratings individually so we can scroll to the exact matrix
             const prompts = Object.values(eval.prompt).filter(v => v !== undefined);
             if (prompts.length < PROMPT_STATEMENTS.length) {
                 return { valid: false, error: 'Please rate all dimensions for Prompt Evaluation.', elementId: 'promptMatrix' };
@@ -1046,7 +1247,6 @@
         }
 
         function nextCase() {
-            // Save current case data FIRST before checking validation
             const caseItem = caseData[currentIndex];
             const eval = evaluations[caseItem.caseId];
             eval.mainWeakness = document.getElementById('mainWeakness').value;
@@ -1063,11 +1263,11 @@
 
             if (currentIndex < caseData.length - 1) {
                 loadCase(currentIndex + 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
         function previousCase() {
-            // Save current case data
             const caseItem = caseData[currentIndex];
             const eval = evaluations[caseItem.caseId];
             eval.mainWeakness = document.getElementById('mainWeakness').value;
@@ -1078,6 +1278,7 @@
 
             if (currentIndex > 0) {
                 loadCase(currentIndex - 1);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -1116,7 +1317,6 @@
             window.URL.revokeObjectURL(url);
         }
 
-        // Setup disposition radio button styling
         document.addEventListener('change', function(e) {
             if (e.target.name === 'disposition') {
                 clearErrors();
@@ -1126,14 +1326,12 @@
             }
         });
 
-        // Clear error highlights when typing in textareas
         document.addEventListener('input', function(e) {
             if (e.target.tagName === 'TEXTAREA') {
                 clearErrors();
             }
         });
 
-        // Initialize on load
         window.addEventListener('load', init);
     </script>
 </body>
